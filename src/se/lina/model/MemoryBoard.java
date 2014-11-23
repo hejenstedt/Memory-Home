@@ -30,7 +30,7 @@ public class MemoryBoard implements GameBoardEventPublisher {
 			tileList.add(new Tile(i + ""));
 		}
 
-//		Collections.shuffle(tileList);
+		Collections.shuffle(tileList);
 
 		Iterator<Tile> iterator = tileList.iterator();
 		for (int row = 0; row < board.length; row++) {
@@ -52,7 +52,6 @@ public class MemoryBoard implements GameBoardEventPublisher {
 		}
 		selectedTile.turnFaceUp();
 		publish(row, column, selectedTile);
-		
 		
 		if (noOfTilesTurned==0) {
 			noOfTilesTurned=1;

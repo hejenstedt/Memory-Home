@@ -1,22 +1,15 @@
 package se.lina.view;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import com.sun.java.swing.plaf.windows.resources.windows;
-
 import se.lina.controller.MemoryBoardController;
-import se.lina.model.MemoryBoard;
 import se.lina.model.ModelObserver;
 import se.lina.model.Tile;
 
@@ -28,6 +21,7 @@ public class MainWindow implements ModelObserver {
 	private ArrayList<JButtonTile> buttonList;
 	private JFrame mainFrame;
 	private JPanel gamePanel;
+	private int noOfPlayers;
 
 	public static void main(String[] args) {
 		// MemoryBoard memoryModel = new MemoryBoard();
@@ -48,17 +42,14 @@ public class MainWindow implements ModelObserver {
 		noOfColumns = 4;
 		int marginals = 20;
 		int windowHeight = (buttonSize + marginals) * noOfRows;
-
+		noOfPlayers = 3;
+		
 		mainFrame.setLayout(new FlowLayout());
 
-		JPanel playerPanel = new JPanel();
-
-		playerPanel.setName("Players:");
-		playerPanel.setBackground(Color.YELLOW);
-		playerPanel.setPreferredSize(new Dimension(playerPanelWidth,
-				windowHeight));
-		playerPanel.setLayout(new FlowLayout());
-
+		JPanelPlayers playerPanel = new JPanelPlayers(playerPanelWidth,
+				windowHeight, Color.YELLOW, "Players:");
+		playerPanel.addPlayerSettings(noOfPlayers);
+		
 		mainFrame.add(playerPanel);
 
 		gamePanel = new JPanel();
@@ -74,8 +65,7 @@ public class MainWindow implements ModelObserver {
 		buttonList = new ArrayList<>();
 		for (int i = 0; i < noOfRows; i++) {
 			for (int j = 0; j < noOfColumns; j++) {
-				JButtonTile tempButton = new JButtonTile(i, j, i + ", " + j,
-						controller);
+				JButtonTile tempButton = new JButtonTile(i, j, "", controller);
 				tempButton.setPreferredSize(new Dimension(buttonSize,
 						buttonSize));
 				tempButton.addActionListener(new ActionListener() {
@@ -95,22 +85,18 @@ public class MainWindow implements ModelObserver {
 
 	}
 
-
 	@Override
 	public void tileTurned(Tile tile, int row, int column) {
 
 		for (JButtonTile jButton : buttonList) {
 			if (jButton.getRow() == row && jButton.getColumn() == column) {
 				if (!tile.isFaceUp()) {
-					waitAWhile(200);
+					waitAWhile(500);
 				}
 				jButton.setText(tile.isFaceUp() ? tile.getValue() : "");
-				System.out.println(row + "," + column + " Tile: "
-						+ tile.getValue());
-
 			}
 		}
-		
+
 		mainFrame.invalidate();
 		mainFrame.pack();
 	}
@@ -126,6 +112,8 @@ public class MainWindow implements ModelObserver {
 	@Override
 	public void gameTurnResult(boolean wasMatch) {
 		// TODO: remove me
+
+	
 	}
 
 }
