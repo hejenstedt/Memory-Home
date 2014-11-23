@@ -25,11 +25,14 @@ public class JPanelPlayers extends JPanel {
 		header.setPreferredSize(new Dimension(250, 50));
 
 		this.add(header);
-	
+		JButtonAddPlayer addPlayer = new JButtonAddPlayer();
+		this.add(addPlayer);
+
 	}
 
 	void addPlayerSettings(int noOfPlayers) {
 		// TODO: add players from PlayerController
+
 		for (int i = 0; i < noOfPlayers; i++) {
 			addPlayerView("Player " + (i + 1));
 		}
@@ -41,13 +44,15 @@ public class JPanelPlayers extends JPanel {
 		JPanel playerView = new JPanel();
 		playerView.setLayout(new GridLayout(1, 2));
 
+		// JTextField player = new JTextField();
+
 		JLabel player = new JLabel(name);
-		JLabel score = new JLabel("0");
 
 		player.setFont(new Font("Courier New", Font.ITALIC, 15));
 		player.setForeground(Color.DARK_GRAY);
 		player.setHorizontalAlignment(JLabel.CENTER);
 
+		JLabel score = new JLabel("0");
 		score.setHorizontalAlignment(JLabel.CENTER);
 
 		playerView.add(player);

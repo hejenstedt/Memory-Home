@@ -12,6 +12,7 @@ import javax.swing.WindowConstants;
 import se.lina.controller.MemoryBoardController;
 import se.lina.model.ModelObserver;
 import se.lina.model.Tile;
+import se.lina.players.PlayerController;
 
 public class MainWindow implements ModelObserver {
 
@@ -22,6 +23,7 @@ public class MainWindow implements ModelObserver {
 	private JFrame mainFrame;
 	private JPanel gamePanel;
 	private int noOfPlayers;
+	private JPanelPlayers playerPanel;
 
 	public static void main(String[] args) {
 		// MemoryBoard memoryModel = new MemoryBoard();
@@ -46,9 +48,11 @@ public class MainWindow implements ModelObserver {
 		
 		mainFrame.setLayout(new FlowLayout());
 
-		JPanelPlayers playerPanel = new JPanelPlayers(playerPanelWidth,
+		playerPanel = new JPanelPlayers(playerPanelWidth,
 				windowHeight, Color.YELLOW, "Players:");
-		playerPanel.addPlayerSettings(noOfPlayers);
+		
+		
+//		playerPanel.addPlayerSettings(noOfPlayers);
 		
 		mainFrame.add(playerPanel);
 
@@ -112,7 +116,12 @@ public class MainWindow implements ModelObserver {
 	@Override
 	public void gameTurnResult(boolean wasMatch) {
 		// TODO: remove me
-
+		PlayerController playerController = new PlayerController();
+		playerController.getCurrentPlayer().getScore();
+		
+		for (int i = 0; i < noOfPlayers; i++) {
+			
+		}
 	
 	}
 
