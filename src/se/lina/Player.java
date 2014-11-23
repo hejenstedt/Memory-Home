@@ -1,4 +1,4 @@
-package mainPackage;
+package se.lina;
 
 public class Player {
 
