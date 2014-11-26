@@ -2,21 +2,26 @@ package se.lina.players;
 
 import java.util.ArrayList;
 
-import se.lina.model.ModelObserver;
+import se.lina.model.GameObserver;
 import se.lina.model.Tile;
 
-public class PlayerController implements ModelObserver {
+public class Players implements GameObserver,PlayerEventPublisher {
 
 	Player currentPlayer;
 	ArrayList<Player> players;
-
-	public PlayerController() {
+	ArrayList<PlayerEventObserver> observers;
+	
+	public Players() {
 		players = new ArrayList<>();
+		observers = new ArrayList<>();
 	}
 
 	public void addPlayer(Player player) {
 		players.add(player);
-		currentPlayer = players.get(0);
+		publish(player);
+		if (currentPlayer == null) {
+			currentPlayer = players.get(0);	
+		}
 	}
 
 	private void nextPlayer() {
@@ -41,14 +46,29 @@ public class PlayerController implements ModelObserver {
 
 		if (!wasMatch) {
 			nextPlayer();
+			System.out.println(currentPlayer.getName()+"'s turn");
+			//TODO: remove line
 		}
 		if (wasMatch) {
 			currentPlayer.increaseScore();
+			publish(currentPlayer);
+			System.out.println(currentPlayer.getName()+" "+currentPlayer.getScore());
+			//TODO: remove line
 		}
 	}
 
 	public Player getCurrentPlayer() {
 		return currentPlayer;
+	}
+
+	@Override
+	public void publish(Player player) {
+		observers.forEach(t->t.playerSettingsChanged(players));
+	}
+
+	@Override
+	public void register(PlayerEventObserver observer) {
+		observers.add(observer);
 	}
 
 }

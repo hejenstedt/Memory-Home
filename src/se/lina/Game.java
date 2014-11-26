@@ -1,8 +1,10 @@
 package se.lina;
 
+import javax.swing.SwingUtilities;
+
 import se.lina.controller.MemoryBoardController;
 import se.lina.model.MemoryBoard;
-import se.lina.players.PlayerController;
+import se.lina.players.Players;
 import se.lina.view.MainWindow;
 
 public class Game {
@@ -11,17 +13,28 @@ public class Game {
 
 	public static void main(String[] args) {
 		Game game = new Game();
-
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				game.startGame();
+			}
+		});
+		
 	}
 
-	public Game() {
+	void startGame(){
 		MemoryBoard memoryBoard = new MemoryBoard(4, 4);
+		Players players = new Players();
 		MemoryBoardController controller = new MemoryBoardController(
-				memoryBoard);
-		mainWindow = new MainWindow(controller);
+				memoryBoard, players);
+		mainWindow = new MainWindow(controller, players);
 		memoryBoard.register(mainWindow);
-		PlayerController playerController = new PlayerController();
-		memoryBoard.register(playerController);
+		memoryBoard.register(players);
+		players.register(mainWindow);
+	}
+	
+	public Game() {
 
 	}
 

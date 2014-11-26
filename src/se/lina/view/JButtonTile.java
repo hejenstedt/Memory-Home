@@ -11,7 +11,7 @@ public class JButtonTile extends JButton {
 	private static final long serialVersionUID = 1L;
 	private final int row;
 	private final int column;
-	private MemoryBoardController controller;
+	private MemoryBoardController boardController;
 
 	public int getRow() {
 		return row;
@@ -22,10 +22,10 @@ public class JButtonTile extends JButton {
 	}
 
 	public JButtonTile(int row, int column, String value,
-			MemoryBoardController controller) {
+			MemoryBoardController boardController) {
 		super(value);
 
-		Objects.nonNull(controller);
+		Objects.nonNull(boardController);
 
 		if (row < 0 || column < 0) {
 			throw new IllegalArgumentException("Row or Column was < 0");
@@ -33,11 +33,11 @@ public class JButtonTile extends JButton {
 
 		this.row = row;
 		this.column = column;
-		this.controller = controller;
+		this.boardController = boardController;
 	}
 
 	void onClick() {
-		controller.tileSelected(row, column);
+		boardController.tileSelected(row, column);
 	}
 
 }

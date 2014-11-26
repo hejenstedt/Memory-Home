@@ -7,14 +7,17 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import se.lina.controller.MemoryBoardController;
-import se.lina.model.ModelObserver;
+import se.lina.model.GameObserver;
 import se.lina.model.Tile;
-import se.lina.players.PlayerController;
+import se.lina.players.Player;
+import se.lina.players.PlayerEventObserver;
+import se.lina.players.Players;
 
-public class MainWindow implements ModelObserver {
+public class MainWindow implements GameObserver, PlayerEventObserver {
 
 	private MemoryBoardController controller;
 	private int noOfRows;
@@ -23,7 +26,7 @@ public class MainWindow implements ModelObserver {
 	private JFrame mainFrame;
 	private JPanel gamePanel;
 	private int noOfPlayers;
-	private JPanelPlayers playerPanel;
+	private PlayersJPanel playerPanel;
 
 	public static void main(String[] args) {
 		// MemoryBoard memoryModel = new MemoryBoard();
@@ -32,8 +35,9 @@ public class MainWindow implements ModelObserver {
 		// memoryModel.register(mainWindow);
 	}
 
-	public MainWindow(MemoryBoardController controller) {
-		this.controller = controller;
+	public MainWindow(MemoryBoardController boardController,
+			Players playerController) {
+		this.controller = boardController;
 
 		mainFrame = new JFrame("Memory Game");
 
@@ -45,15 +49,14 @@ public class MainWindow implements ModelObserver {
 		int marginals = 20;
 		int windowHeight = (buttonSize + marginals) * noOfRows;
 		noOfPlayers = 3;
-		
+
 		mainFrame.setLayout(new FlowLayout());
 
-		playerPanel = new JPanelPlayers(playerPanelWidth,
-				windowHeight, Color.YELLOW, "Players:");
-		
-		
-//		playerPanel.addPlayerSettings(noOfPlayers);
-		
+		playerPanel = new PlayersJPanel(playerPanelWidth, windowHeight,
+				Color.YELLOW, "Players:", boardController);
+
+//		 playerPanel.addPlayerSettings(noOfPlayers);
+
 		mainFrame.add(playerPanel);
 
 		gamePanel = new JPanel();
@@ -69,7 +72,8 @@ public class MainWindow implements ModelObserver {
 		buttonList = new ArrayList<>();
 		for (int i = 0; i < noOfRows; i++) {
 			for (int j = 0; j < noOfColumns; j++) {
-				JButtonTile tempButton = new JButtonTile(i, j, "", controller);
+				JButtonTile tempButton = new JButtonTile(i, j, "",
+						boardController);
 				tempButton.setPreferredSize(new Dimension(buttonSize,
 						buttonSize));
 				tempButton.addActionListener(new ActionListener() {
@@ -89,9 +93,12 @@ public class MainWindow implements ModelObserver {
 
 	}
 
+	private void updatePlayersInMainWindow() {
+		mainFrame.repaint();
+	}
+
 	@Override
 	public void tileTurned(Tile tile, int row, int column) {
-
 		for (JButtonTile jButton : buttonList) {
 			if (jButton.getRow() == row && jButton.getColumn() == column) {
 				if (!tile.isFaceUp()) {
@@ -100,9 +107,6 @@ public class MainWindow implements ModelObserver {
 				jButton.setText(tile.isFaceUp() ? tile.getValue() : "");
 			}
 		}
-
-		mainFrame.invalidate();
-		mainFrame.pack();
 	}
 
 	private void waitAWhile(int millis) {
@@ -115,14 +119,24 @@ public class MainWindow implements ModelObserver {
 
 	@Override
 	public void gameTurnResult(boolean wasMatch) {
-		// TODO: remove me
-		PlayerController playerController = new PlayerController();
-		playerController.getCurrentPlayer().getScore();
-		
-		for (int i = 0; i < noOfPlayers; i++) {
+		// playerController.getCurrentPlayer().getScore();
+		//
+		// for (int i = 0; i < noOfPlayers; i++) {
+		//
+		// }
+		//
+	}
+
+	@Override
+	public void playerSettingsChanged(ArrayList<Player> players) {
+
+		for (int i = 1; i < players.size(); i++) {
+			playerPanel.remove(2);//TODO - kan vara fel?
 			
 		}
-	
+		playerPanel.addPlayerSettings(players);
+//		playerPanel.addPlayerView(player.getName(), player.getScore());
+		updatePlayersInMainWindow();
 	}
 
 }
