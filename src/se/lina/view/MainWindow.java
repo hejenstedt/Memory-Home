@@ -25,20 +25,13 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 	private ArrayList<JButtonTile> buttonList;
 	private JFrame mainFrame;
 	private JPanel gamePanel;
-	private int noOfPlayers;
+	private boolean playersAddedBefore;
 	private PlayersJPanel playerPanel;
-
-	public static void main(String[] args) {
-		// MemoryBoard memoryModel = new MemoryBoard();
-		// ControllerTest controller = new ControllerTest(memoryModel);
-		// MainWindow mainWindow = new MainWindow(controller);
-		// memoryModel.register(mainWindow);
-	}
 
 	public MainWindow(MemoryBoardController boardController,
 			Players playerController) {
 		this.controller = boardController;
-
+		playersAddedBefore = false;
 		mainFrame = new JFrame("Memory Game");
 
 		int playerPanelWidth = 300;
@@ -48,14 +41,14 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 		noOfColumns = 4;
 		int marginals = 20;
 		int windowHeight = (buttonSize + marginals) * noOfRows;
-		noOfPlayers = 3;
+		// noOfPlayersAdded = 3;
 
 		mainFrame.setLayout(new FlowLayout());
 
 		playerPanel = new PlayersJPanel(playerPanelWidth, windowHeight,
 				Color.YELLOW, "Players:", boardController);
 
-//		 playerPanel.addPlayerSettings(noOfPlayers);
+		// playerPanel.addPlayerSettings(noOfPlayers);
 
 		mainFrame.add(playerPanel);
 
@@ -119,23 +112,22 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 
 	@Override
 	public void gameTurnResult(boolean wasMatch) {
-		// playerController.getCurrentPlayer().getScore();
-		//
-		// for (int i = 0; i < noOfPlayers; i++) {
-		//
-		// }
-		//
+		// TODO: remove me
 	}
 
 	@Override
 	public void playerSettingsChanged(ArrayList<Player> players) {
 
-		for (int i = 1; i < players.size(); i++) {
-			playerPanel.remove(2);//TODO - kan vara fel?
-			
+		if (playersAddedBefore) {
+
+			for (int i = 0; i < players.size(); i++) {
+				playerPanel.remove(2);
+				// TODO - kan vara fel?
+				
+			}
 		}
+		playersAddedBefore = true;
 		playerPanel.addPlayerSettings(players);
-//		playerPanel.addPlayerView(player.getName(), player.getScore());
 		updatePlayersInMainWindow();
 	}
 

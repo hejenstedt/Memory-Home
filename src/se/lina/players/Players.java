@@ -46,6 +46,7 @@ public class Players implements GameObserver,PlayerEventPublisher {
 
 		if (!wasMatch) {
 			nextPlayer();
+			publish(currentPlayer);
 			System.out.println(currentPlayer.getName()+"'s turn");
 			//TODO: remove line
 		}

@@ -12,8 +12,6 @@ import javax.swing.JPanel;
 
 import se.lina.controller.MemoryBoardController;
 import se.lina.players.Player;
-import se.lina.players.PlayerEventObserver;
-import se.lina.players.Players;
 
 public class PlayersJPanel extends JPanel {
 
@@ -50,8 +48,6 @@ public class PlayersJPanel extends JPanel {
 		JPanel playerView = new JPanel();
 		playerView.setLayout(new GridLayout(1, 2));
 
-		// JTextField player = new JTextField();
-
 		JLabel player = new JLabel(name);
 
 		player.setFont(new Font("Courier New", Font.ITALIC, 15));
@@ -68,6 +64,13 @@ public class PlayersJPanel extends JPanel {
 		this.add(playerView);
 		this.revalidate();
 		this.repaint();
+	}
+	
+	void updatePlayerView(){
+		
+		this.removeAll();
+	
+	
 	}
 
 }
