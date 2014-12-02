@@ -10,7 +10,6 @@ public class MemoryBoard implements GameBoardEventPublisher {
 
 	private final ArrayList<GameObserver> observers;
 	private Tile[][] board;
-
 	private Tile lastTile;
 	private int noOfTilesTurned;
 
@@ -21,10 +20,25 @@ public class MemoryBoard implements GameBoardEventPublisher {
 		noOfTilesTurned = 0;
 	}
 
+	public void reStartBoard(){
+		noOfTilesTurned = 0;
+		fillBoard();
+		observers.forEach(t-> t.reStartBoard());
+	}
+	
+	public void reStartBoardWithNewSize(int rows, int columns){
+		noOfTilesTurned=0;
+		board = new Tile[rows][columns];
+		fillBoard();
+		//TODO: trigger change in MainWindow
+		observers.forEach(t-> t.reStartBoardWithNewSize(rows, columns));
+	}
+	
 	private void fillBoard() {
 		List<Tile> tileList = new LinkedList<>();
 
 		for (int i = 0; i < noOfPairs(); i++) {
+			//TODO: add different themes 
 			tileList.add(new Tile(i + ""));
 			tileList.add(new Tile(i + ""));
 		}
@@ -49,7 +63,6 @@ public class MemoryBoard implements GameBoardEventPublisher {
 				}
 			}
 		}
-
 		return true;
 	}
 
@@ -59,9 +72,11 @@ public class MemoryBoard implements GameBoardEventPublisher {
 
 	public void turnTileUp(int row, int column) {
 		Tile selectedTile = board[row][column];
+		
 		if (selectedTile.isFaceUp()) {
 			return;
 		}
+		
 		selectedTile.turnFaceUp();
 		publish(row, column, selectedTile);
 
@@ -74,16 +89,24 @@ public class MemoryBoard implements GameBoardEventPublisher {
 			if (!matches) {
 				turnTilesBack(row, column, selectedTile);
 			}
-			observers.forEach(t -> t.gameTurnResult(matches));
+			publishGameResult(matches, selectedTile);
+			
+			if (isGameOver()) {
+				observers.forEach(t-> t.gameOver());
+			}
 		}
+		
+	}
 
+	private void publishGameResult(boolean matches, Tile selectedTile) {
+		observers.forEach(t -> t.gameTurnResult(matches, selectedTile, lastTile));
 	}
 
 	private void turnTilesBack(int row, int column, Tile selectedTile) {
 		lastTile.turnFaceDown();
 		selectedTile.turnFaceDown();
-		publish(getRowIndexOf(lastTile), getColumnIndexOf(lastTile), lastTile);
-		publish(row, column, selectedTile);
+//		publish(getRowIndexOf(lastTile), getColumnIndexOf(lastTile), lastTile);
+//		publish(row, column, selectedTile);
 	}
 
 	int getRowIndexOf(Tile tile) {

@@ -8,8 +8,6 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import se.lina.controller.MemoryBoardController;
-import se.lina.players.Player;
-import se.lina.players.Players;
 
 public class JButtonAddPlayer extends JButton {
 
@@ -32,7 +30,6 @@ public class JButtonAddPlayer extends JButton {
 	}
 
 	void onClick() {
-		// TODO: Make sure that the new player gets a place in the mainwindow
 		String newPlayerName = (String) JOptionPane.showInputDialog(
 				"Please enter the new players name", null);
 

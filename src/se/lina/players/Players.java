@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import se.lina.model.GameObserver;
 import se.lina.model.Tile;
 
-public class Players implements GameObserver,PlayerEventPublisher {
+public class Players implements GameObserver, PlayerEventPublisher {
 
-	Player currentPlayer;
-	ArrayList<Player> players;
-	ArrayList<PlayerEventObserver> observers;
+	private Player currentPlayer;
+	private ArrayList<Player> players;
+	private ArrayList<PlayerEventObserver> observers;
 	
 	public Players() {
 		players = new ArrayList<>();
@@ -18,21 +18,30 @@ public class Players implements GameObserver,PlayerEventPublisher {
 
 	public void addPlayer(Player player) {
 		players.add(player);
-		publish(player);
 		if (currentPlayer == null) {
-			currentPlayer = players.get(0);	
+			currentPlayer = players.get(0);
+			players.get(0).setToCurrentPlayer();
 		}
+		publish(player);
 	}
 
 	private void nextPlayer() {
 
 		int position = players.indexOf(currentPlayer);
 		if (position < players.size() - 1) {
+			currentPlayer.setNotLongerCurrentPlayer();
 			currentPlayer = players.get(position + 1);
+			currentPlayer.setToCurrentPlayer();
 		} else if (position == players.size() - 1) {
-			currentPlayer = players.get(0);
+			firstPlayerSetToCurrentPlayer();
 		}
 
+	}
+
+	private void firstPlayerSetToCurrentPlayer() {
+		currentPlayer.setNotLongerCurrentPlayer();
+		currentPlayer = players.get(0);
+		currentPlayer.setToCurrentPlayer();
 	}
 
 	@Override
@@ -42,7 +51,8 @@ public class Players implements GameObserver,PlayerEventPublisher {
 	}
 
 	@Override
-	public void gameTurnResult(boolean wasMatch) {
+	public void gameTurnResult(boolean wasMatch, Tile selectedTile,
+			Tile lastTile) {
 
 		if (!wasMatch) {
 			nextPlayer();
@@ -71,5 +81,37 @@ public class Players implements GameObserver,PlayerEventPublisher {
 	public void register(PlayerEventObserver observer) {
 		observers.add(observer);
 	}
+
+	@Override
+	public void gameOver() {
+		//TODO: find player with highest score
+		Player winner = null;
+		int score = 0;
+		for (Player player: players) {
+			if (player.getScore()>score) {
+				winner = player;
+				score = winner.getScore();
+			}
+		}
+		final Player temp = winner;
+		observers.forEach(t-> t.winnerFound(temp));
+	}
+
+	@Override
+	public void reStartBoard() {
+		players.forEach(p -> p.score=0);
+		
+		firstPlayerSetToCurrentPlayer();
+			
+		observers.forEach(t-> t.playerSettingsChanged(players));
+	}
+
+	@Override
+	public void reStartBoardWithNewSize(int rows, int columns) {
+		players.forEach(p -> p.score=0);
+			
+		observers.forEach(t-> t.playerSettingsChanged(players));
+	}
+	
 
 }

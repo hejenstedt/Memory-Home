@@ -1,5 +1,7 @@
 package se.lina.view;
 
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.Objects;
 
 import javax.swing.JButton;
@@ -21,15 +23,18 @@ public class JButtonTile extends JButton {
 		return column;
 	}
 
-	public JButtonTile(int row, int column, String value,
-			MemoryBoardController boardController) {
-		super(value);
+	public JButtonTile(int row, int column,
+			MemoryBoardController boardController, int buttonSize) {
+		super();
 
 		Objects.nonNull(boardController);
 
 		if (row < 0 || column < 0) {
 			throw new IllegalArgumentException("Row or Column was < 0");
 		}
+
+		this.setPreferredSize(new Dimension(buttonSize, buttonSize));
+		this.setFont(new Font("Arial", Font.BOLD, 30));
 
 		this.row = row;
 		this.column = column;
