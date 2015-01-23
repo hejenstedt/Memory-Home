@@ -53,18 +53,15 @@ public class Players implements GameObserver, PlayerEventPublisher {
 	@Override
 	public void gameTurnResult(boolean wasMatch, Tile selectedTile,
 			Tile lastTile) {
-
+		currentPlayer.increaseNoOfMoves();
+		
 		if (!wasMatch) {
 			nextPlayer();
 			publish(currentPlayer);
-			System.out.println(currentPlayer.getName()+"'s turn");
-			//TODO: remove line
 		}
 		if (wasMatch) {
 			currentPlayer.increaseScore();
 			publish(currentPlayer);
-			System.out.println(currentPlayer.getName()+" "+currentPlayer.getScore());
-			//TODO: remove line
 		}
 	}
 
@@ -84,7 +81,6 @@ public class Players implements GameObserver, PlayerEventPublisher {
 
 	@Override
 	public void gameOver() {
-		//TODO: find player with highest score
 		Player winner = null;
 		int score = 0;
 		for (Player player: players) {
@@ -100,7 +96,7 @@ public class Players implements GameObserver, PlayerEventPublisher {
 	@Override
 	public void reStartBoard() {
 		players.forEach(p -> p.score=0);
-		
+		players.forEach(p-> p.resetNoOfMoves());
 		firstPlayerSetToCurrentPlayer();
 			
 		observers.forEach(t-> t.playerSettingsChanged(players));
@@ -109,7 +105,7 @@ public class Players implements GameObserver, PlayerEventPublisher {
 	@Override
 	public void reStartBoardWithNewSize(int rows, int columns) {
 		players.forEach(p -> p.score=0);
-			
+		players.forEach(p-> p.resetNoOfMoves());
 		observers.forEach(t-> t.playerSettingsChanged(players));
 	}
 	

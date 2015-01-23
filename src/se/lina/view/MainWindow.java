@@ -1,10 +1,10 @@
 package se.lina.view;
 
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Image;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
@@ -28,6 +28,8 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 	private int marginals;
 	private int buttonSize;
 	private int windowHeight;
+	private String fileWay;
+	private ImageIcon backgroundImage;
 
 	public MainWindow(int rows, int columns) {
 	}
@@ -37,7 +39,8 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 		this.controller = boardController;
 		noOfRows = rows;
 		noOfColumns = columns;
-
+		fileWay = "C:\\Users\\Lina\\Documents\\GitHub\\Memory-Home\\src\\resources\\";
+		backgroundImage = new ImageIcon((fileWay + "siffror-bakgrund.gif"));
 		initiateNewMainFrame();
 
 	}
@@ -45,11 +48,16 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 	void initiateNewMainFrame() {
 		mainFrame = new JFrame("Memory Game");
 		int playerPanelWidth = 300;
-		marginals = 20;
+		
+		marginals = 10;
 		windowHeight = 750;
 		buttonSize = (windowHeight - (marginals * (noOfRows - 1))) / noOfRows;
 		buttonList = new ArrayList<>();
-
+		
+		Image img = backgroundImage.getImage();
+		Image newimg = img.getScaledInstance( buttonSize, buttonSize,  java.awt.Image.SCALE_SMOOTH ) ;
+		backgroundImage= new ImageIcon(newimg);
+		
 		mainFrame.setLayout(new FlowLayout());
 
 		addPlayerPanel(playerPanelWidth);
@@ -58,30 +66,17 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 
 		mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		mainFrame.pack();
+		mainFrame.validate();
 		mainFrame.setVisible(true);
 
 	}
 
 	private void addGamePanel() {
-		gamePanel = new GameBoardJPanel(noOfRows, noOfColumns, marginals);
-
+		gamePanel = new GameBoardJPanel(noOfRows, noOfColumns, marginals, controller, backgroundImage, fileWay);
+		gamePanel.addButtonsForTiles(buttonSize);
 		mainFrame.add(gamePanel);
-
-		for (int i = 0; i < noOfRows; i++) {
-			for (int j = 0; j < noOfColumns; j++) {
-				JButtonTile tempButton = new JButtonTile(i, j, controller,
-						buttonSize);
-				tempButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent event) {
-						tempButton.onClick();
-					}
-				});
-				gamePanel.add(tempButton);
-				buttonList.add(tempButton);
-			}
-		}
 	}
+
 
 	private void addPlayerPanel(int playerPanelWidth) {
 		playerPanel = new PlayersJPanel(playerPanelWidth, windowHeight,
@@ -92,26 +87,17 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 
 	@Override
 	public void tileTurned(Tile tile, int row, int column) {
-		for (JButtonTile jButton : buttonList) {
-			if (jButton.getRow() == row && jButton.getColumn() == column) {
-				jButton.setText(tile.isFaceUp() ? tile.getValue() : "");
-			}
-		}
+		gamePanel.updateTurnedTile(tile, row, column);
+		mainFrame.revalidate();
 	}
+
 
 	@Override
 	public void gameTurnResult(boolean wasMatch, Tile selectedTile,
 			Tile lastTile) {
 		waitAWhile(500);
-		for (JButtonTile jButtonTile : buttonList) {
-			if (jButtonTile.getText().equals(lastTile.getValue())) {
-				jButtonTile.setText(lastTile.isFaceUp() ? lastTile.getValue() : "");
-			}
-			if (jButtonTile.getText().equals(selectedTile.getValue())) {
-				jButtonTile.setText(selectedTile.isFaceUp() ? selectedTile.getValue() : "");
-			}
-
-		}
+		gamePanel.updateAllTiles(selectedTile, lastTile);
+		mainFrame.revalidate();
 	}
 
 	private void waitAWhile(int millis) {
@@ -161,7 +147,8 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 
 	@Override
 	public void reStartBoard() {
-		buttonList.forEach(button -> button.setText(""));
+		buttonList.forEach(button -> button.changeIcon(backgroundImage));
+		buttonList.forEach(button -> button.setName("not turned"));
 	}
 
 	@Override
@@ -171,7 +158,9 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 
 		buttonList.clear();
 		buttonSize = (windowHeight - (marginals * (noOfRows - 1))) / noOfRows;
-
+		Image img = backgroundImage.getImage();
+		Image newimg = img.getScaledInstance( buttonSize, buttonSize,  java.awt.Image.SCALE_SMOOTH ) ;
+		backgroundImage= new ImageIcon(newimg);
 		mainFrame.remove(gamePanel);
 
 		addGamePanel();
@@ -180,6 +169,5 @@ public class MainWindow implements GameObserver, PlayerEventObserver {
 		mainFrame.setVisible(true);
 
 	}
-
 
 }

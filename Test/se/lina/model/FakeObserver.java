@@ -19,20 +19,17 @@ public 	class FakeObserver implements GameObserver {
 
 	@Override
 	public void reStartBoard() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void reStartBoardWithNewSize(int rows, int columns) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void gameTurnResult(boolean wasMatch, Tile selectedTile,
 			Tile lastTile) {
-		// TODO Auto-generated method stub
 		
 	}
 	

@@ -21,10 +21,10 @@ public class MainWindowTest {
 				memoryBoard, players);
 	}
 	
+	@SuppressWarnings("unused")
 	@Test(timeout = 1000)
 	public void createMainWindowTimingTest(){
 		MainWindow mainWindow = new MainWindow(controller, players, 2, 2);
-
 	}
 	
 }
